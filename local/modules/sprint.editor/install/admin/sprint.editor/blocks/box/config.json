@@ -1,0 +1,6 @@
+{
+  "templates": [
+    "layout.html",
+    "select-pack.html"
+  ]
+}

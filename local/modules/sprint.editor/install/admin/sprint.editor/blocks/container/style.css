@@ -1,0 +1,28 @@
+.sp-block-container {
+    border: 1px solid #ccc;
+}
+
+.sp-block-container .sp-buttons{
+    padding: 10px 10px 0;
+    background: #eee;
+}
+.sp-block-container .sp-buttons {
+    font-size: 0;
+}
+
+.sp-block-container .sp-buttons span {
+    font-size: 13px;
+}
+
+.sp-block-container .sp-acc-box {
+    margin: 10px;
+}
+
+.sp-block-container .sp-acc-box-handle {
+    cursor: move;
+}
+
+.sp-block-container .sp-acc-box.ui-sortable-helper {
+    background: #e0e8ea;
+    padding: 10px 10px 20px;
+}

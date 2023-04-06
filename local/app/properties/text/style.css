@@ -1,0 +1,18 @@
+.text-editor .trumbowyg-textarea {
+    min-height: 100px;
+}
+
+.text-editor .trumbowyg-editor{
+    min-height: 100px !important;
+    padding: 5px;
+    height: 100px !important;
+}
+
+.text-editor .trumbowyg-box {
+    min-height: 100px !important;
+}
+
+.trumbowyg-box {
+    margin: 0;
+    margin-bottom: 10px;
+}

@@ -1,0 +1,91 @@
+<div class="sp-x-lt">
+    <div class="sp-x-buttons sp-x-buttons-lt1">
+        {{?it.enableChange}}
+        <div class="sp-x-buttons-group sp-x-pp-lt-hover">
+            <span class="sp-x-btn sp-x-pp-lt-open">&equiv;</span>
+            <div class="sp-x-pp-lt">
+                <div class="sp-x-pp-group">
+                    {{?it.columns.length > 1}}
+                    <span title="Изменить название колонки" class="sp-x-btn sp-x-col-edit">Изменить название</span>
+                    {{?}}
+                    {{?it.enablePacks}}
+                    <span title="Сохранить сетку как макет" class="sp-x-btn sp-x-lt-save">Сохранить как макет</span>
+                    {{?}}
+                </div>
+                <div class="sp-x-pp-group">
+                    <span title="Вставить блоки" class="sp-x-btn sp-x-col-paste">&crarr; Вставить</span>
+                    <span title="Копировать видимые блоки в сетке" class="sp-x-btn sp-x-col-copy">Копировать</span>
+                    <span title="Вырезать видимые блоки в сетке" class="sp-x-btn sp-x-col-cut">Вырезать</span>
+                </div>
+                {{?it.columns.length > 1}}
+                <div class="sp-x-pp-group">
+                    <span title="Передвинуть колонку влево" class="sp-x-btn sp-x-col-left">&larr; Влево</span>
+                    <span title="Передвинуть колонку вправо" class="sp-x-btn sp-x-col-right">&rarr; Вправо</span>
+                </div>
+                {{?}}
+                <div class="sp-x-pp-group">
+                    <span title="Поднять вверх" class="sp-x-btn sp-x-lt-up">&uarr; Поднять</span>
+                    <span title="Опустить вниз" class="sp-x-btn sp-x-lt-dn">&darr; Опустить</span>
+                </div>
+                <div class="sp-x-pp-group">
+                    <span title="Свернуть\Развернуть блоки" class="sp-x-btn sp-x-lt-collapse">Свернуть\Развернуть</span>
+                    <span title="Удалить" class="sp-x-btn sp-x-lt-del">х Удалить</span>
+                </div>
+            </div>
+        </div>
+        {{?}}
+        <div class="sp-x-lt-tabs" {{?it.columns.length== 1}}style="display:none" {{?}}>
+            {{~it.columns :col}}
+            <span class="sp-x-btn sp-x-btn-green sp-x-col-tab" data-uid="{{=col.uid}}">
+                <span class="sp-x-col-title">{{=col.title}}</span>
+                <span class="sp-x-col-index"></span>
+            </span>
+            {{~}}
+        </div>
+        {{?it.compiled.length > 0}}
+        <div class="sp-x-lt-settings" title="Настройка сетки, общая для всех колонок">
+            {{~it.compiled :item}}
+            <div data-name="{{!item.name}}" class="sp-x-settings-group">
+                {{~item.options :option}}
+                {{?option.selected}}
+                <span class="sp-x-active" title="{{!option.value}}" data-value="{{!option.value}}">{{=option.title}}</span>
+                {{??}}
+                <span title="{{!option.value}}" data-value="{{!option.value}}">{{=option.title}}</span>
+                {{?}}
+                {{~}}
+            </div>
+            {{~}}
+        </div>
+        {{?}}
+    </div>
+    {{?it.enableChange || it.compiled.length > 0 || it.columns.length > 1}}
+    <div class="sp-x-separator sp-x-separator-lt"></div>
+    {{?}}
+    <div class="sp-x-lt-row">
+        {{~it.columns :col}}
+        <div class="sp-x-col" data-uid="{{=col.uid}}">
+            {{?col.compiled.length > 0}}
+            <div class="sp-x-col-settings" title="Настройка выбранной колонки">
+                {{~col.compiled :item}}
+                <div class="sp-x-settings-group">
+                    {{~item.options :option}}
+                    {{?option.selected}}
+                    <span title="{{!option.value}}" data-value="{{!option.value}}" class="sp-x-active">{{=option.title}}</span>
+                    {{??}}
+                    <span title="{{!option.value}}" data-value="{{!option.value}}">{{=option.title}}</span>
+                    {{?}}
+                    {{~}}
+                </div>
+                {{~}}
+            </div>
+            {{?}}
+        </div>
+        {{~}}
+    </div>
+    <div class="sp-x-buttons sp-x-buttons-lt2">
+        {{?it.enableChange}}
+        <span class="sp-x-btn sp-x-btn-green sp-x-pp-blocks-open">Добавить блок</span>
+        <span class="sp-x-btn sp-x-lastblock">Добавить</span>
+        {{?}}
+    </div>
+</div>

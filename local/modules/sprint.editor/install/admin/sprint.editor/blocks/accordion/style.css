@@ -1,0 +1,48 @@
+.sp-block-accordion .sp-acc-tab {
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.sp-block-accordion .sp-acc-buttons1 {
+    position: relative;
+}
+
+.sp-block-accordion .sp-acc-buttons2,
+.sp-block-accordion .sp-acc-buttons1 {
+    padding: 10px 10px 0;
+    background: #eee;
+}
+
+
+.sp-block-accordion .sp-acc-buttons1,
+.sp-block-accordion .sp-acc-buttons2 {
+    font-size: 0;
+}
+
+.sp-block-accordion .sp-acc-buttons2 span {
+    font-size: 13px;
+}
+
+.sp-block-accordion input.sp-acc-tab-value {
+    width: 60%;
+    float: right;
+}
+
+.sp-block-accordion .sp-acc-box {
+    margin: 10px;
+}
+
+.sp-block-accordion .sp-acc-box-handle,
+.sp-block-accordion .sp-acc-tab-handle {
+    cursor: move;
+}
+
+
+.sp-block-accordion .sp-acc-box.ui-sortable-helper {
+    background: #e0e8ea;
+    padding: 10px 10px 20px;
+}
+.sp-block-accordion .sp-acc-tab.ui-sortable-helper {
+    background: #e0e8ea;
+    /*padding: 10px 10px 20px;*/
+}

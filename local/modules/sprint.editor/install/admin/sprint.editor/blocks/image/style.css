@@ -1,0 +1,53 @@
+.sp-block-image {
+    position: relative;
+}
+
+.sp-block-image .sp-col-item {
+    width: 210px;
+}
+
+.sp-block-image .sp-col-item {
+    width: 200px;
+}
+
+.sp-block-image .sp-result {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    background: #ccc;
+    overflow: hidden;
+    text-align: center;
+}
+
+.sp-block-image .sp-result img {
+
+}
+
+.sp-block-image .sp-col-desc {
+    background: #eee;
+}
+
+.sp-block-image .sp-source {
+    background: #FFEBC1;
+}
+
+.sp-block-image.sp-show .sp-source {
+    display: block;
+}
+
+.sp-block-image .sp-download-url,
+.sp-block-image .sp-item-text {
+    width: 80%;
+}
+
+.sp-block-image .sp-fields {
+    padding: 10px;
+}
+
+.sp-block-image .sp-field {
+    margin-bottom: 10px;
+}
+
+.sp-block-image .sp-field:last-child {
+    margin-bottom: 0;
+}

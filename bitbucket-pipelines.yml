@@ -1,0 +1,14 @@
+image:  atlassian/default-image:latest
+
+pipelines:
+  branches:
+    master:
+      - step:
+          deployment: production
+          script:
+            - ssh -T $USER@$HOST 'bash -s' < ./deploy.sh $SITE_ROOT
+    develop:
+      - step:
+          deployment: devaid
+          script:
+            - ssh -T $USER@$HOST 'bash -s' < ./deploy.sh $SITE_ROOT

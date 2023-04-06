@@ -1,0 +1,10 @@
+{
+  "title": "Яндекс Карта",
+  "sort": "340",
+  "js": [
+    "/bitrix/admin/sprint.editor/assets/bindWithDelay.js"
+  ],
+  "templates": [
+    "placemark.html"
+  ]
+}

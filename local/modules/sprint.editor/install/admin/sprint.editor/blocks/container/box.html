@@ -1,0 +1,35 @@
+<div class="sp-acc-box" data-uid="{{=it.uid}}">
+    <div class="sp-x-buttons sp-x-buttons-box">
+        <div class="sp-x-buttons-group">
+            <span class="sp-x-btn sp-x-pp-box-open">&equiv;</span>
+            <div class="sp-x-pp-box">
+                <div class="sp-x-pp-group">
+                    <span title="Поднять вверх" class="sp-x-btn sp-acc-box-up">&uarr; Поднять</span>
+                    <span title="Опустить вниз" class="sp-x-btn sp-acc-box-dn">&darr; Опустить</span>
+                </div>
+                <div class="sp-x-pp-group">
+                    <span title="Удалить блок" class="sp-x-btn sp-acc-box-del">x Удалить</span>
+                </div>
+            </div>
+        </div>
+        <div class="sp-x-buttons-group">
+            <span class="sp-x-btn sp-acc-box-handle">{{=it.title}}</span>
+        </div>
+    </div>
+    {{?it.compiled && it.compiled.length > 0}}
+    <div class="sp-x-box-settings">
+        {{~it.compiled :item}}
+        <div data-name="{{!item.name}}" class="sp-x-settings-group">
+            {{~item.options :option}}
+            {{?option.selected}}
+            <span class="sp-x-active" data-value="{{!option.value}}">{{=option.title}}</span>
+            {{??}}
+            <span data-value="{{!option.value}}">{{=option.title}}</span>
+            {{?}}
+            {{~}}
+        </div>
+        {{~}}
+    </div>
+    {{?}}
+    <div class="sp-acc-box-block"></div>
+</div>

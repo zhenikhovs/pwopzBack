@@ -1,0 +1,28 @@
+{
+  "name": "andreyryabin/sprint.editor",
+  "description": "Редактор для контент-менеджеров (1С-Битрикс)",
+  "homepage": "http://marketplace.1c-bitrix.ru/solutions/sprint.editor/",
+  "type": "bitrix-module",
+  "keywords": [
+    "bitrix",
+    "editor"
+  ],
+  "authors": [
+    {
+      "name": "Andrey Ryabin",
+      "email": "andreyryabin@yandex.ru",
+      "role": "Author"
+    },
+    {
+      "name": "Gripinskiy Sergey",
+      "email": "web-architect@mail.ru",
+      "role": "Contributor"
+    }
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=5.4.0",
+    "ext-json": "*",
+    "composer/installers": "~1"
+  }
+}
