@@ -13,20 +13,9 @@ CModule::IncludeModule('highloadblock');
 
 try {
     Loader::registerAutoLoadClasses(null, [
-        // конфиги и помощники
-        'Legacy\Config' => '/local/app/classes/config.php',
         'Legacy\Helper' => '/local/app/classes/helper/general.php',
-        // Отправка форм обратной связи
-        'Legacy\Api\Form' => '/local/app/classes/form/api.php',
-        // Контент
-        'Legacy\Api\Content' => '/local/app/classes/content/api.php',
 
-        // Страницы
-        'Legacy\Api\Pages' => '/local/app/classes/pages/api.php',
-
-
-
-
+        'Legacy\Api\Auth' => '/local/app/classes/auth/api.php',
 
     ]);
 } catch (LoaderException $e) {

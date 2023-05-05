@@ -4,7 +4,7 @@ namespace Sprint\Editor;
 
 class UserTypeEditor
 {
-    function GetUserTypeDescription()
+    static function GetUserTypeDescription()
     {
         return [
             "USER_TYPE_ID" => "sprint_editor",

@@ -14,20 +14,11 @@ if (!empty($sJson)) {
     $arQuery = json_decode($sJson, true);
 }
 
-// if(!$_REQUEST['debug']){
-
-//     if($arQuery['apikey'] != Config::ApiKey){
-//         http_response_code(200);
-//         print_r(mb_strtolower(json_encode(['error' => 'Не указан API KEY'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE)));
-//         die();
-//     }
-
-// }
-
 try {
     if (empty($_GET['method'])) {
         throw new Exception('Пустой method');
     }
+
 
     $arMethod = explode('.', $_GET['method']);
     if (empty($arMethod[0]) and empty($arMethod[1])) {
@@ -37,11 +28,14 @@ try {
     unset($arMethod[count($arMethod) - 1]);
     $class = 'Legacy\Api\\' . implode('\\', $arMethod);
 
+
+
     if (!class_exists($class)) {
         throw new Exception('Класс ' . $class . ' не существует');
     } elseif (!method_exists($class, $function)) {
         throw new Exception('Функция ' . $function . ' в классе ' . $class . ' не существует');
     }
+
 
     // начало выполнения скрипта загрузки
     $start = microtime(true);
@@ -50,9 +44,10 @@ try {
     if (!empty($arQuery) and is_array($arQuery)) {
         $arParams = $arQuery;
     }
+
     $arReturn = $class::$function($arParams);
 
-    if (empty($arReturn['status']) or empty($arReturn['code'])) {
+    if (empty($arReturn['status']) ) {
         throw new Exception('Метод не смог вернуть ответ');
     }
 
