@@ -16,6 +16,7 @@ try {
         'Legacy\Helper' => '/local/app/classes/helper/general.php',
 
         'Legacy\Api\Auth' => '/local/app/classes/auth/api.php',
+        'Legacy\Api\User' => '/local/app/classes/user/api.php',
 
     ]);
 } catch (LoaderException $e) {
