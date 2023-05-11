@@ -112,6 +112,39 @@ class User
 
     }
 
+    public static function GetUserGroupsInfo() {
+        global $USER;
+
+        $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Groups, 'ACTIVE'=>'Y', 'PROPERTY_USER'=>$USER->GetID(),
+            'PROPERTY_USER_GROUP'=>[]);
+
+        $arSelect = [
+            'ID'
+        ];
+
+        $res = \CIBlockElement::GetList('ASC', $arFilter, false, false, $arSelect);
+
+        $arResultUserGroups = [];
+
+        while($item = $res->Fetch()){
+            foreach($item as $key => $value){
+                if(strripos($key,'VALUE_ID')){
+                    unset($item[$key]);
+                    continue;
+                }
+                if(strripos($key,'PROPERTY') !== false){
+                    $old_key = $key;
+                    $key = str_replace(['PROPERTY_','_VALUE','~'], '', $key);
+                    $item[$key] = $value;
+                    unset($item[$old_key]);
+                }
+            }
+
+            $arResultUserGroups[] = $item['ID'];
+        }
+
+        return $arResultUserGroups;
+    }
 
 
 }
