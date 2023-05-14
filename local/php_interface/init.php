@@ -20,6 +20,8 @@ try {
         'Legacy\Api\User' => '/local/app/classes/user/api.php',
         'Legacy\Api\Course' => '/local/app/classes/course/api.php',
         'Legacy\Api\Module' => '/local/app/classes/module/api.php',
+        'Legacy\Api\Test' => '/local/app/classes/test/api.php',
+        'Legacy\Api\Question' => '/local/app/classes/question/api.php',
 
     ]);
 } catch (LoaderException $e) {

@@ -99,4 +99,74 @@ class Module
         }
     }
 
+    public static function GetReadModuleBefore($courseID, $moduleID) {
+        global $USER;
+
+        $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Result_modules,
+            'ACTIVE'=>'Y',
+            'USER'=>$USER->GetID(),
+            'PROPERTY_COURSE' => $courseID,
+            'PROPERTY_MODULE' => $moduleID,
+        );
+
+        $arSelect = [
+            'ID'
+        ];
+
+        $res = \CIBlockElement::GetList(Array("SORT"=>"ASC"), $arFilter, false, false, $arSelect);
+        $arResult = [];
+
+        while($item = $res->Fetch()){
+            foreach($item as $key => $value){
+                if(strripos($key,'VALUE_ID')){
+                    unset($item[$key]);
+                    continue;
+                }
+                if(strripos($key,'PROPERTY') !== false){
+                    $old_key = $key;
+                    $key = str_replace(['PROPERTY_','_VALUE','~'], '', $key);
+                    $item[$key] = $value;
+                    unset($item[$old_key]);
+                }
+            }
+
+            $arResult[] = $item['ID'];
+        }
+
+
+        return count($arResult) > 0;
+    }
+
+    public static function AddReadModule($arRequest){
+        global $USER;
+
+        $courseID = $arRequest['course_id'];
+        $moduleID = $arRequest['module_id'];
+
+
+        $arLoadProperties = Array(
+            'NAME' => 'Элемент',
+            'IBLOCK_ID'=> \Legacy\Config::Result_modules,
+            'ACTIVE'=>'Y',
+            'PROPERTY_VALUES'=>[
+                'MODULE'=>$moduleID,
+                'COURSE'=>$courseID,
+                'USER'=>$USER->GetID(),
+            ]
+        );
+
+        if(!self::GetReadModuleBefore($courseID,$moduleID)){
+            $el = new \CIBlockElement;
+            if($res = $el->Add($arLoadProperties)){
+                return Helper::GetResponseApi(200, []);
+            } else{
+                return Helper::GetResponseApi(404, [], 'Ошибка добавления:' . $res->LAST_ERROR);
+            }
+        }
+        else {
+            return Helper::GetResponseApi(200, []);
+        }
+
+    }
+
 }

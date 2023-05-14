@@ -115,8 +115,7 @@ class User
     public static function GetUserGroupsInfo() {
         global $USER;
 
-        $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Groups, 'ACTIVE'=>'Y', 'PROPERTY_USER'=>$USER->GetID(),
-            'PROPERTY_USER_GROUP'=>[]);
+        $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Groups, 'ACTIVE'=>'Y', 'PROPERTY_USER'=>$USER->GetID());
 
         $arSelect = [
             'ID'
