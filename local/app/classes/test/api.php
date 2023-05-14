@@ -14,6 +14,29 @@ class Test
 
         $testsInfo = Course::GetCoursesTestsInfo();
 
+        $arCoursesTestResults = [];
+        foreach ($testsInfo['courses_tests_info'] as $course_test){
+            $result = self::GetDoneTestBefore($course_test['course_id'],$course_test['test_id']);
+            if($result){
+                $arCoursesTestResults[] = [
+                    'name'=>$course_test['name'],
+                    'course_id'=> $course_test['course_id'],
+                    'test_id'=>$course_test['test_id'],
+                    'results' => [
+                        'correct_answers'=>$result['correct_answers'],
+                        'questions_count'=>$result['questions_count']
+                        ]
+                ];
+            } else{
+                $arCoursesTestResults[] = [
+                    'name'=>$course_test['name'],
+                    'course_id'=> $course_test['course_id'],
+                    'test_id'=>$course_test['test_id'],
+                    'results' => null
+                ];
+            }
+        }
+
         if(count($testsInfo['tests_ids'])){
             $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Tests,
                 'ACTIVE'=>'Y', 'ID' => $testsInfo['tests_ids']
@@ -51,7 +74,7 @@ class Test
 
             return Helper::GetResponseApi(200, [
                 'tests' => $arTests,
-                'courses_tests_info' => $testsInfo['courses_tests_info']
+                'courses_tests_info' => $arCoursesTestResults
             ]);
         }
         else {
@@ -118,9 +141,7 @@ class Test
     }
 
 
-    public static function GetTestResult($testID,$userAnswers) {
-
-
+    public static function GetTestResultInfo($testID,$userAnswers) {
         $testAnswers = Question::GetQuestionsAnswersInfo($testID);
 
         $correctAnswersCount = 0;
@@ -140,6 +161,53 @@ class Test
         ];
     }
 
+    public static function GetDoneTestBefore($courseID, $testID) {
+        global $USER;
+
+        $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Result_tests,
+            'ACTIVE'=>'Y',
+            'USER'=>$USER->GetID(),
+            'PROPERTY_COURSE' => $courseID,
+            'PROPERTY_TEST' => $testID,
+        );
+
+        $arSelect = [
+            'ID',
+            'PROPERTY_RESULT',
+            'PROPERTY_QUESTIONS_COUNT'
+        ];
+
+        $res = \CIBlockElement::GetList(Array("SORT"=>"ASC"), $arFilter, false, false, $arSelect);
+        $arResult = [];
+
+        while($item = $res->Fetch()){
+            foreach($item as $key => $value){
+                if(strripos($key,'VALUE_ID')){
+                    unset($item[$key]);
+                    continue;
+                }
+                if(strripos($key,'PROPERTY') !== false){
+                    $old_key = $key;
+                    $key = str_replace(['PROPERTY_','_VALUE','~'], '', $key);
+                    $item[$key] = $value;
+                    unset($item[$old_key]);
+                }
+            }
+
+            $arResult[] =   [
+                'id' => $item['ID'],
+                'correct_answers' =>$item['RESULT'],
+                'questions_count' =>$item['QUESTIONS_COUNT']
+            ];
+        }
+
+
+         if(count($arResult) > 0){
+             return $arResult[0];
+         } else {
+             return false;
+         }
+    }
 
     public static function AddDoneTest($arRequest){
         global $USER;
@@ -148,7 +216,7 @@ class Test
         $testID = $arRequest['test_id'];
         $userAnswers = $arRequest['test_answers'];
 
-        $testResult = self::GetTestResult($testID,$userAnswers);
+        $testResult = self::GetTestResultInfo($testID,$userAnswers);
 
 
         $arLoadProperties = Array(
@@ -164,16 +232,30 @@ class Test
             ]
         );
 
-        $el = new \CIBlockElement;
-        if($res = $el->Add($arLoadProperties)){
-            return Helper::GetResponseApi(200, [
-                'correct_answers' => $testResult['correct_answers'],
-                'questions_count' => $testResult['questions_count'],
-            ]);
-        } else{
-            return Helper::GetResponseApi(404, [],
-                'Ошибка. Повторите попытку позднее.' . $res->LAST_ERROR);
+        if($id = self::GetDoneTestBefore($courseID,$testID)['id']){
+            $el = new \CIBlockElement;
+            if($res = $el->Update($id, $arLoadProperties)){
+                return Helper::GetResponseApi(200, [
+                    'correct_answers' => $testResult['correct_answers'],
+                    'questions_count' => $testResult['questions_count'],
+                ]);
+            } else{
+                return Helper::GetResponseApi(404, [],
+                    'Ошибка. Повторите попытку позднее.' . $res->LAST_ERROR);
+            }
+        } else {
+            $el = new \CIBlockElement;
+            if($res = $el->Add($arLoadProperties)){
+                return Helper::GetResponseApi(200, [
+                    'correct_answers' => $testResult['correct_answers'],
+                    'questions_count' => $testResult['questions_count'],
+                ]);
+            } else{
+                return Helper::GetResponseApi(404, [],
+                    'Ошибка. Повторите попытку позднее.' . $res->LAST_ERROR);
+            }
         }
+
 
     }
 

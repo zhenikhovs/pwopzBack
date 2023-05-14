@@ -16,7 +16,7 @@ class Auth
         $password = $arRequest['password'];
         $confirm_password = $arRequest['confirm_password'];
         $email = $arRequest['email'];
-        $group = explode(',', $arRequest['group']);
+//        $group = explode(',', $arRequest['group']);
 
         $arFields = Array(
             "LOGIN" => $login,
@@ -25,7 +25,7 @@ class Auth
             "PASSWORD" => $password,
             "CONFIRM_PASSWORD" => $confirm_password,
             "EMAIL" => $email,
-            "GROUP_ID" => $group
+            "GROUP_ID" => ['6']
         );
 
 
