@@ -38,7 +38,7 @@ class Module
             }
 
             $arResult[] = [
-                'ID' => $item['ID'],
+                'id' => $item['ID'],
                 'name' => $item['NAME'],
                 'upper_module' => $item['UPPER_MODULE'],
             ];
@@ -137,6 +137,7 @@ class Module
         return count($arResult) > 0;
     }
 
+    //перенести в резалт
     public static function AddReadModule($arRequest){
         global $USER;
 

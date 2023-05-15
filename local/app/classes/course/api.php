@@ -9,23 +9,31 @@ use Bitrix\Main\UserTable;
 class Course
 {
     public static function GetUserCourses() {
+
+        return Helper::GetResponseApi(200, [
+            'courses' => self::GetUserCoursesInfo()
+        ]);
+    }
+
+    public static function GetUserCoursesInfo() {
         global $USER;
 
         $arResultUserGroups = User::GetUserGroupsInfo();
 
         $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Courses,
-                'ACTIVE'=>'Y',
-                array(
-                    "LOGIC" => "OR",
-                    'PROPERTY_USER'=>$USER->GetID(),
-                    'PROPERTY_USER_GROUP'=>$arResultUserGroups
-                )
-            );
+            'ACTIVE'=>'Y',
+            array(
+                "LOGIC" => "OR",
+                'PROPERTY_USER'=>$USER->GetID(),
+                'PROPERTY_USER_GROUP'=>$arResultUserGroups
+            )
+        );
 
         $arSelect = [
             'ID',
             'NAME',
-            'PROPERTY_DESCRIPTION'
+            'PROPERTY_DESCRIPTION',
+            'PROPERTY_TEST',
         ];
 
         $res = \CIBlockElement::GetList('ASC', $arFilter, false, false, $arSelect);
@@ -46,16 +54,13 @@ class Course
             }
 
             $arResult[] = [
-                'ID' => $item['ID'],
+                'id' => $item['ID'],
                 'name' => $item['NAME'],
                 'description' => $item['DESCRIPTION'],
+                'test_id' => $item['TEST'],
             ];
         }
-
-
-        return Helper::GetResponseApi(200, [
-            'courses' => $arResult
-        ]);
+        return $arResult;
     }
 
     public static function GetCourse($arRequest) {

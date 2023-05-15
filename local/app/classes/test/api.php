@@ -161,19 +161,20 @@ class Test
         ];
     }
 
-    public static function GetDoneTestBefore($courseID, $testID) {
+    //перенести в резалт
+    public static function GetDoneTestBefore($courseID) {
         global $USER;
 
         $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Result_tests,
             'ACTIVE'=>'Y',
             'USER'=>$USER->GetID(),
-            'PROPERTY_COURSE' => $courseID,
-            'PROPERTY_TEST' => $testID,
+            'PROPERTY_COURSE' => $courseID
         );
 
         $arSelect = [
             'ID',
             'PROPERTY_RESULT',
+            'PROPERTY_TEST',
             'PROPERTY_QUESTIONS_COUNT'
         ];
 
@@ -196,6 +197,7 @@ class Test
 
             $arResult[] =   [
                 'id' => $item['ID'],
+                'test_id' => $item['TEST'],
                 'correct_answers' =>$item['RESULT'],
                 'questions_count' =>$item['QUESTIONS_COUNT']
             ];
@@ -232,7 +234,7 @@ class Test
             ]
         );
 
-        if($id = self::GetDoneTestBefore($courseID,$testID)['id']){
+        if($id = self::GetDoneTestBefore($courseID)['id']){
             $el = new \CIBlockElement;
             if($res = $el->Update($id, $arLoadProperties)){
                 return Helper::GetResponseApi(200, [
@@ -255,8 +257,6 @@ class Test
                     'Ошибка. Повторите попытку позднее.' . $res->LAST_ERROR);
             }
         }
-
-
     }
 
 

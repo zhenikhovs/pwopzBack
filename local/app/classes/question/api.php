@@ -51,7 +51,7 @@ class Question
         return $arResult;
     }
 
-
+    //перенести в резалт
     public static function GetQuestionsAnswersInfo($testID) {
 
         $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Questions,
