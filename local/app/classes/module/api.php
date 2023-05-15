@@ -104,7 +104,7 @@ class Module
 
         $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Result_modules,
             'ACTIVE'=>'Y',
-            'USER'=>$USER->GetID(),
+            'PROPERTY_USER'=>$USER->GetID(),
             'PROPERTY_COURSE' => $courseID,
             'PROPERTY_MODULE' => $moduleID,
         );

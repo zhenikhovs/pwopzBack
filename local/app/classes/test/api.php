@@ -16,7 +16,7 @@ class Test
 
         $arCoursesTestResults = [];
         foreach ($testsInfo['courses_tests_info'] as $course_test){
-            $result = self::GetDoneTestBefore($course_test['course_id'],$course_test['test_id']);
+            $result = self::GetDoneTestBefore($course_test['course_id']);
             if($result){
                 $arCoursesTestResults[] = [
                     'name'=>$course_test['name'],
@@ -39,7 +39,8 @@ class Test
 
         if(count($testsInfo['tests_ids'])){
             $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Tests,
-                'ACTIVE'=>'Y', 'ID' => $testsInfo['tests_ids']
+                'ACTIVE'=>'Y',
+                'ID' => $testsInfo['tests_ids']
             );
 
             $arSelect = [
@@ -162,17 +163,22 @@ class Test
     }
 
     //перенести в резалт
-    public static function GetDoneTestBefore($courseID) {
+    public static function GetDoneTestBefore($courseID, $userID=null) {
         global $USER;
+
+        if(!$userID){
+            $userID=$USER->GetID();
+        }
 
         $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Result_tests,
             'ACTIVE'=>'Y',
-            'USER'=>$USER->GetID(),
+            'PROPERTY_USER'=>$userID,
             'PROPERTY_COURSE' => $courseID
         );
 
         $arSelect = [
             'ID',
+            'PROPERTY_USER',
             'PROPERTY_RESULT',
             'PROPERTY_TEST',
             'PROPERTY_QUESTIONS_COUNT'

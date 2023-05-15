@@ -166,15 +166,58 @@ class Course
                     'course_id' =>$item['ID']
                 ];
             }
-
-
-
         }
 
        return [
            'tests_ids' => $arTestsIDs,
            'courses_tests_info' => $arCoursesTests,
        ];
+    }
+
+
+    public static function GetCoursesInfo($IDs = []) {
+
+        $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Courses,
+            'ACTIVE'=>'Y',
+            'ID' => $IDs
+        );
+
+        $arSelect = [
+            'ID',
+            'NAME',
+            'PROPERTY_DESCRIPTION',
+            'PROPERTY_TEST',
+            'PROPERTY_USER',
+            'PROPERTY_USER_GROUP',
+        ];
+
+        $res = \CIBlockElement::GetList('ASC', $arFilter, false, false, $arSelect);
+        $arResult = [];
+
+        while($item = $res->Fetch()){
+            foreach($item as $key => $value){
+                if(strripos($key,'VALUE_ID')){
+                    unset($item[$key]);
+                    continue;
+                }
+                if(strripos($key,'PROPERTY') !== false){
+                    $old_key = $key;
+                    $key = str_replace(['PROPERTY_','_VALUE','~'], '', $key);
+                    $item[$key] = $value;
+                    unset($item[$old_key]);
+                }
+            }
+
+            $arResult[] = [
+                'id' => $item['ID'],
+                'name' => $item['NAME'],
+                'description' => $item['DESCRIPTION'],
+                'test_id' => $item['TEST'],
+                'user_group' => $item['USER_GROUP'],
+                'user' => $item['USER'],
+            ];
+        }
+        return $arResult;
     }
 
 

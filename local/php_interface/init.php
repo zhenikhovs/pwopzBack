@@ -23,6 +23,7 @@ try {
         'Legacy\Api\Test' => '/local/app/classes/test/api.php',
         'Legacy\Api\Question' => '/local/app/classes/question/api.php',
         'Legacy\Api\Result' => '/local/app/classes/result/api.php',
+        'Legacy\Api\Group' => '/local/app/classes/group/api.php',
 
     ]);
 } catch (LoaderException $e) {

@@ -19,8 +19,12 @@ class User
         }
     }
 
-    public static function GetUserInfo() {
+    public static function GetUserInfo($userID = null) {
         global $USER;
+
+        if(!$userID){
+            $userID = $USER->GetID();
+        }
 
         $result = [];
 
@@ -32,13 +36,13 @@ class User
                 'LAST_NAME',
                 'EMAIL'
             ],
-            'filter' => ['ID' => $USER->GetID()]
+            'filter' => ['ID' => $userID]
         ]);
 
         if ($user) {
             //получаю список групп пользователя (там всегда возвращается массив с 2 группой)
             //удаляю вторую группу, превращаю массив в строку
-            $userGroupID = implode(array_diff($USER->GetUserGroup($USER->GetID()), ["2"]));
+            $userGroupID = implode(array_diff($USER->GetUserGroup($userID), ["2"]));
 
             //получаю инфу о группе по айди, беру название
             $userGroup = \CGroup::GetByID($userGroupID)->Fetch();
