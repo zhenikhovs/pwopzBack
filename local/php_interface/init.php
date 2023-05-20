@@ -24,6 +24,7 @@ try {
         'Legacy\Api\Question' => '/local/app/classes/question/api.php',
         'Legacy\Api\Result' => '/local/app/classes/result/api.php',
         'Legacy\Api\Group' => '/local/app/classes/group/api.php',
+        'Legacy\Api\BX24' => '/local/app/classes/BX24/api.php',
 
     ]);
 } catch (LoaderException $e) {

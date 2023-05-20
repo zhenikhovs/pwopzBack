@@ -34,7 +34,8 @@ class User
                 'LOGIN',
                 'NAME',
                 'LAST_NAME',
-                'EMAIL'
+                'EMAIL',
+                'PERSONAL_NOTES',
             ],
             'filter' => ['ID' => $userID]
         ]);
@@ -55,7 +56,8 @@ class User
                 "email" => $user['EMAIL'],
                 "name" => $user['NAME'],
                 "last_name" => $user['LAST_NAME'],
-                "group" => $userGroupInfo
+                "group" => $userGroupInfo,
+                "personal_notes" => $user['PERSONAL_NOTES'],
             ];
         }
 
@@ -150,4 +152,30 @@ class User
     }
 
 
+    public static function GetUsersFromBX24Info($dealID) {
+
+        $res = \CUser::GetList(
+            "personal_notes", "asc",array('PERSONAL_NOTES'=>$dealID));
+
+        $arResult = [];
+
+        while($item = $res->Fetch()){
+            foreach($item as $key => $value){
+                if(strripos($key,'VALUE_ID')){
+                    unset($item[$key]);
+                    continue;
+                }
+                if(strripos($key,'PROPERTY') !== false){
+                    $old_key = $key;
+                    $key = str_replace(['PROPERTY_','_VALUE','~'], '', $key);
+                    $item[$key] = $value;
+                    unset($item[$old_key]);
+                }
+            }
+
+            $arResult[] = $item['ID'];
+        }
+
+        return $arResult;
+    }
 }

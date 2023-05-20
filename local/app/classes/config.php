@@ -17,6 +17,7 @@ class Config
     public const Questions = 20;
     public const Result_modules = 21;
     public const Result_tests = 22;
+    public const Infoblock = 23;
 
 
 }

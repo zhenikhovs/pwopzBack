@@ -8,6 +8,11 @@ $arUrlRewrite=array (
         ),
     1 =>
         array(
+            'CONDITION' => '#^/request/addUserCourse.php#',
+            'PATH' => '/local/request/index.php',
+        ),
+    2 =>
+        array(
             'CONDITION' => '#^(.*)#',
             'PATH' => '/app/index.php',
         ),

@@ -1,15 +1,15 @@
 <?php
 
 namespace Legacy\Api;
-use Legacy\Api\User;
 use Legacy\Api\Module;
+use Legacy\Api\User;
 use Legacy\Helper;
 use Bitrix\Main\UserTable;
 
 class Course
 {
-    public static function GetUserCourses() {
 
+    public static function GetUserCourses() {
         return Helper::GetResponseApi(200, [
             'courses' => self::GetUserCoursesInfo()
         ]);
@@ -63,6 +63,12 @@ class Course
         return $arResult;
     }
 
+    public static function GetCourses() {
+        return Helper::GetResponseApi(200, [
+            'courses' => self::GetCoursesInfo()
+        ]);
+    }
+
     public static function GetCourse($arRequest) {
         $courseID = $arRequest['course_id'];
 
@@ -84,7 +90,10 @@ class Course
         $arSelect = [
             'ID',
             'NAME',
-            'PROPERTY_DESCRIPTION'
+            'PROPERTY_DESCRIPTION',
+            'PROPERTY_USER',
+            'PROPERTY_USER_GROUP',
+            'PROPERTY_TEST',
         ];
 
         $res = \CIBlockElement::GetList('ASC', $arFilter, false, false, $arSelect);
@@ -108,6 +117,9 @@ class Course
                 'ID' => $item['ID'],
                 'name' => $item['NAME'],
                 'description' => $item['DESCRIPTION'],
+                'users' => $item['USER'],
+                'groups' => $item['USER_GROUP'],
+                'test' => $item['TEST'],
             ];
         }
 

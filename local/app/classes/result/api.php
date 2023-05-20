@@ -124,14 +124,51 @@ class Result
             //все пользователи кому назначен курс
             $allUsers = array_values(array_unique(array_merge($userFromGroups,$course['user'])));
 
+            $averageCourseProgress = 0;
+            $averageTestProgress = 0;
+            $testsCount = 0;
+
             $userProgressInfo = [];
             $usersInfo = [];
             foreach ($allUsers as $user){
                 $usersInfo[$user] = User::GetUserInfo($user);
+                //прочитанные модули пользователя
+                $readModules = self::GetReadCourseModulesInfo($course['id'], $user);
+                //проверка на наличие модулей в курсе
+                if(count($courseModules) !==0 ){
+                    $averageCourseProgress += count($readModules)/count($courseModules);
+                }
+
+                //результаты тестирования пользователя (если нет false)
+                $testResults = Test::GetDoneTestBefore($course['id'],$user);
+                if($testResults){
+                    //увеличиваем количество людей прошедших тест
+                    $testsCount++;
+                    $averageTestProgress += intval($testResults['correct_answers'])/intval($testResults['questions_count']);
+                }
+
                 $userProgressInfo[$user] = [
-                    'read_modules' => self::GetReadCourseModulesInfo($course['id'], $user),
-                    'test_results' => Test::GetDoneTestBefore($course['id'],$user),
+                    'read_modules' => $readModules,
+                    'test_results' => $testResults,
                 ];
+            }
+
+            if (count($courseModules) ===0 ){
+                $averageCourseProgress = '-';
+            } else{
+                if (count($allUsers) !== 0 ){
+                    $averageCourseProgress /= count($allUsers);
+                    $averageCourseProgress = intval($averageCourseProgress*100) . '%';
+                } else{
+                    $averageCourseProgress = '-';
+                }
+            }
+
+            if ($testsCount === 0 || !isset($course['test_id'])){
+                $averageTestProgress = '-';
+            } else{
+                $averageTestProgress /= $testsCount;
+                $averageTestProgress = intval($averageTestProgress*100) . '%';
             }
 
             $arResult[] = [
@@ -145,7 +182,14 @@ class Result
                 'all_users' => $allUsers,
                 'users_info' => $usersInfo,
                 'modules' => $courseModules,
-                'users_progress' =>$userProgressInfo
+                'users_progress' =>$userProgressInfo,
+                'average_course_progress' => $averageCourseProgress,
+                'average_test_progress' => $averageTestProgress,
+                'modules_count' => count($courseModules),
+                'groups_count' => count($course['user_group']),
+                'all_users_count' => count($allUsers),
+                'individual_users_count' => count($course['user']),
+                'user_from_groups_count' => count($userFromGroups),
             ];
         }
 
