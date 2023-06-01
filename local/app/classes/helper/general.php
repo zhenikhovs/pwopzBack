@@ -35,22 +35,6 @@ class Helper
     }
 
 
-    public static function GetResponseAjax($code, $data)
-    {
-        if ($code) {
-            $code = 200;
-        } else {
-            $code = 422;
-        }
-
-        $arData = $data;
-        $arData["code"] = $code;
-        $arData["status"] = $data['message'];
-
-        return $arData;
-    }
-
-
      public static function CurlBitrix24($method, $arData=array()){
         $queryUrl = "https://legacy.bitrix24.ru/rest/16/4dnhn1xtr5kp6hup/".$method;
         $curl = curl_init();

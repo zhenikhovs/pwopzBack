@@ -118,6 +118,7 @@ class User
 
     }
 
+    //перенести в группы
     public static function GetUserGroupsInfo() {
         global $USER;
 

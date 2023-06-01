@@ -63,6 +63,46 @@ class Course
         return $arResult;
     }
 
+    public static function GetGroupCoursesInfo($group) {
+        $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Courses,
+            'ACTIVE'=>'Y',
+            'PROPERTY_USER_GROUP' => $group
+        );
+
+        $arSelect = [
+            'ID',
+            'NAME',
+            'PROPERTY_DESCRIPTION',
+            'PROPERTY_TEST',
+        ];
+
+        $res = \CIBlockElement::GetList('ASC', $arFilter, false, false, $arSelect);
+        $arResult = [];
+
+        while($item = $res->Fetch()){
+            foreach($item as $key => $value){
+                if(strripos($key,'VALUE_ID')){
+                    unset($item[$key]);
+                    continue;
+                }
+                if(strripos($key,'PROPERTY') !== false){
+                    $old_key = $key;
+                    $key = str_replace(['PROPERTY_','_VALUE','~'], '', $key);
+                    $item[$key] = $value;
+                    unset($item[$old_key]);
+                }
+            }
+
+            $arResult[] = [
+                'id' => $item['ID'],
+                'name' => $item['NAME'],
+                'description' => $item['DESCRIPTION'],
+                'test_id' => $item['TEST'],
+            ];
+        }
+        return $arResult;
+    }
+
     public static function GetCourses() {
         return Helper::GetResponseApi(200, [
             'courses' => self::GetCoursesInfo()
@@ -77,7 +117,6 @@ class Course
             'course_info' => self::GetCourseInfo($courseID)
         ]);
     }
-
 
     public static function GetCourseInfo($courseID) {
         global $USER;
@@ -129,7 +168,6 @@ class Course
             return null;
         }
     }
-
 
     public static function GetCoursesTestsInfo() {
         global $USER;
@@ -185,7 +223,6 @@ class Course
            'courses_tests_info' => $arCoursesTests,
        ];
     }
-
 
     public static function GetCoursesInfo($IDs = []) {
 

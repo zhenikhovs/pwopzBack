@@ -203,35 +203,160 @@ class Result
 
 
 
+    public static function GetStatisticsGroups(){
+        $courses = Course::GetCoursesInfo();
+        $groups = Group::GetGroupsInfo();
+
+        $arResult = [
+
+        ];
+
+        foreach ($groups as $group){
+            //информация о курсах группы
+            $groupCourses = Course::GetGroupCoursesInfo($group);
+
+            $groupCoursesInfo = [];
+            $groupUsersInfo = [];
+            $coursesGroupCount = 0;
+            $averageGroupCourseProgress = 0;
+            $testsGroupCount = 0;
+            $averageGroupTestProgress = 0;
+            foreach ($groupCourses as $groupCourse ){
+                $courseModules = Module::GetCourseModulesInfo($groupCourse['id']);
+
+                $averageCourseProgress = 0;
+                $testsCount = 0;
+                $averageTestProgress = 0;
+                foreach ($group['users'] as $user){
+                    //прочитанные модули пользователя
+                    $readModules = self::GetReadCourseModulesInfo($groupCourse['id'], $user);
+
+                    //проверка на наличие модулей в курсе
+                    if(count($courseModules) !==0 ){
+                        $averageCourseProgress += count($readModules)/count($courseModules);
+                    }
+
+                    //результаты тестирования пользователя (если нет false)
+                    $testResults = Test::GetDoneTestBefore($groupCourse['id'],$user);
+                    if($testResults){
+                        //увеличиваем количество людей прошедших тест
+                        $testsCount++;
+                        $averageTestProgress += intval($testResults['correct_answers'])/intval($testResults['questions_count']);
+                    }
+                }
+
+                if (count($courseModules) ===0 ){
+                    $averageCourseProgress = '-';
+                } else{
+                    if (count($group['users']) !== 0 ){
+                        $averageCourseProgress /= count($group['users']);
+                        $averageGroupCourseProgress += $averageCourseProgress;
+                        $coursesGroupCount++;
+                        $averageCourseProgress = intval($averageCourseProgress*100) . '%';
+                    } else{
+                        $averageCourseProgress = '-';
+                    }
+                }
+
+                if ($testsCount === 0 || !isset($groupCourse['test_id'])){
+                    $averageTestProgress = '-';
+                } else{
+                    $averageTestProgress /= $testsCount;
+                    $averageGroupTestProgress += $averageTestProgress;
+                    $testsGroupCount++;
+                    $averageTestProgress = intval($averageTestProgress*100) . '%';
+                }
+
+                $groupCoursesInfo[] = [
+                    'course_name' => $groupCourse['name'],
+                    'course_modules_progress' => $averageCourseProgress,
+                    'course_test_progress' => $averageTestProgress,
+                    'modules_count' => count($courseModules)
+                ];
+            }
 
 
+            foreach ($group['users'] as $user){
+                $usersInfo = User::GetUserInfo($user);
+
+                $coursesCount = 0;
+                $averageCourseProgress = 0;
+                $testsCount = 0;
+                $averageTestProgress = 0;
+                foreach ($groupCourses as $course ) {
+                    $courseModules = Module::GetCourseModulesInfo($course['id']);
+                    //прочитанные модули пользователя
+                    $readModules = self::GetReadCourseModulesInfo($course['id'], $user);
+                    //проверка на наличие модулей в курсе
+                    if(count($courseModules) !==0 ){
+                        $coursesCount++;
+                        $averageCourseProgress += count($readModules)/count($courseModules);
+                    }
+
+                    //результаты тестирования пользователя (если нет false)
+                    $testResults = Test::GetDoneTestBefore($course['id'],$user);
+                    if($testResults){
+                        //увеличиваем количество пройденных тестов пользователя
+                        $testsCount++;
+                        $averageTestProgress += intval($testResults['correct_answers'])/intval($testResults['questions_count']);
+                    }
+                }
+
+                if ($coursesCount ===0 ){
+                    $averageCourseProgress = '-';
+                } else{
+                    $averageCourseProgress /= $coursesCount;
+                    $averageCourseProgress = intval($averageCourseProgress*100) . '%';
+                }
+
+                if ($testsCount === 0){
+                    $averageTestProgress = '-';
+                } else{
+                    $averageTestProgress /= $testsCount;
+                    $averageTestProgress = intval($averageTestProgress*100) . '%';
+                }
+
+                $groupUsersInfo[] = [
+                    'user_fio' => $usersInfo['name'] . ' ' . $usersInfo['last_name'],
+                    'course_modules_progress' => $averageCourseProgress,
+                    'course_test_progress' => $averageTestProgress,
+                ];
+
+            }
+
+            $averageGroupCourseProgress = count($group['users']) > 0? intval($averageGroupCourseProgress/$coursesGroupCount*100) . '%' : '-';
+            $averageGroupTestProgress = count($group['users']) > 0? intval($averageGroupTestProgress/$testsGroupCount*100) . '%' : '-';
+
+            $arResult[$group['name']]=[
+                'id' => $group['id'],
+                'group_name' => $group['name'],
+                'group_courses_count' => count($groupCourses),
+                'users_count' => count($group['users']),
+                'group_courses_info' => $groupCoursesInfo,
+                'course_modules_progress' => $averageGroupCourseProgress,
+                'course_test_progress' => $averageGroupTestProgress,
+                'group_users_info' =>$groupUsersInfo,
+            ];
+        }
 
 
-
-
-
-
-
-
-
-
+        return Helper::GetResponseApi(200, [
+            'groups_progress' => $arResult
+        ]);
+    }
 
 
 
 
     public static function GetStatisticsUsers(){
 
-        return Helper::GetResponseApi(200, [
-            'user_courses_progress' => []
-        ]);
-    }
-
-    public static function GetStatisticsGroups(){
 
         return Helper::GetResponseApi(200, [
             'user_courses_progress' => []
         ]);
     }
+
+
 
 
 
