@@ -352,19 +352,92 @@ class Result
 
         $users = User::GetAllUsers();
 
+        $usersCourses = [];
+        $usersDetailCourses = [];
+
         foreach ($users as $user){
-            Course::GetUserCoursesInfo($user);
+            $userCourses = Course::GetUserCoursesInfo($user);
+
+            $coursesCount = 0;
+            $averageCourseProgress = 0;
+            $testsCount = 0;
+            $averageTestProgress = 0;
+
+            $coursesDetail = [];
+            foreach ($userCourses as $course ) {
+                $courseModules = Module::GetCourseModulesInfo($course['id']);
+                //прочитанные модули пользователя
+                $readModules = self::GetReadCourseModulesInfo($course['id'], $user);
+
+                $courseProgress = '';
+                //проверка на наличие модулей в курсе
+                if(count($courseModules) !==0 ){
+                    $coursesCount++;
+                    $averageCourseProgress += count($readModules)/count($courseModules);
+                    $courseProgress = intval(count($readModules)/count($courseModules)*100) . '%';
+                } else{
+                    $courseProgress = 'Нет модулей';
+                }
+
+                $testProgress = '';
+                //результаты тестирования пользователя (если нет false)
+                $testResults = Test::GetDoneTestBefore($course['id'],$user);
+                if($testResults){
+                    //увеличиваем количество пройденных тестов пользователя
+                    $testsCount++;
+                    $averageTestProgress += intval($testResults['correct_answers'])/intval($testResults['questions_count']);
+                    $testProgress = intval(intval($testResults['correct_answers'])/intval($testResults['questions_count'])*100) . '%';
+                } else {
+                    $testProgress = 'Тест не пройден';
+                }
+
+                if(!$course['test_id']){
+                    $testProgress = 'Тест отсутствует';
+                }
+
+
+
+                $coursesDetail[] = [
+                    'course_info'=> $course,
+                    'course_name' => $course['name'],
+                    'modules_count' => count($courseModules),
+                    'course_progress' => $courseProgress,
+                    'test_progress' => $testProgress
+                ];
+            }
+
+            if ($coursesCount ===0 ){
+                $averageCourseProgress = '-';
+            } else{
+                $averageCourseProgress /= $coursesCount;
+                $averageCourseProgress = intval($averageCourseProgress*100) . '%';
+            }
+
+            if ($testsCount === 0){
+                $averageTestProgress = '-';
+            } else{
+                $averageTestProgress /= $testsCount;
+                $averageTestProgress = intval($averageTestProgress*100) . '%';
+            }
+
+            $usersCourses[] = [
+                'user_fio' => $user['name'] . ' ' . $user['last_name'],
+                'course_count' => count($userCourses),
+                'course_modules_progress' => $averageCourseProgress,
+                'course_test_progress' => $averageTestProgress,
+
+            ];
+
+            $usersDetailCourses[$user['id']] = $coursesDetail;
+
         }
 
         return Helper::GetResponseApi(200, [
-            'user_courses_progress' => $users
+            'users_courses' => $usersCourses,
+            'users_detail_courses' => $usersDetailCourses,
+            'users' => $users,
         ]);
     }
-
-
-
-
-
 
 
 }
