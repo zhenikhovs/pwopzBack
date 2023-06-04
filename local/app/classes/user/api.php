@@ -19,6 +19,42 @@ class User
         }
     }
 
+    public static function GetAllUsers() {
+
+        $order = array('sort' => 'asc');
+        $tmp = 'sort';
+        $arFilter = Array(
+            'GROUPS_ID' => 6
+        );
+        $res = \CUser::GetList($order, $tmp, $arFilter);
+
+        $arResult = [];
+
+        while($item = $res->Fetch()){
+            foreach($item as $key => $value){
+                if(strripos($key,'VALUE_ID')){
+                    unset($item[$key]);
+                    continue;
+                }
+                if(strripos($key,'PROPERTY') !== false){
+                    $old_key = $key;
+                    $key = str_replace(['PROPERTY_','_VALUE','~'], '', $key);
+                    $item[$key] = $value;
+                    unset($item[$old_key]);
+                }
+            }
+
+            $arResult[] = [
+                'id' => $item['ID'],
+                'name' => $item['NAME'],
+                'last_name' => $item['LAST_NAME'],
+                'email' => $item['EMAIL'],
+            ];
+        }
+        return $arResult;
+
+    }
+
     public static function GetUserInfo($userID = null) {
         global $USER;
 
@@ -119,10 +155,13 @@ class User
     }
 
     //перенести в группы
-    public static function GetUserGroupsInfo() {
+    public static function GetUserGroupsInfo($user = null) {
         global $USER;
 
-        $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Groups, 'ACTIVE'=>'Y', 'PROPERTY_USER'=>$USER->GetID());
+        if(!$user){
+            $user = $USER->GetID();
+        }
+        $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Groups, 'ACTIVE'=>'Y', 'PROPERTY_USER'=>$user);
 
         $arSelect = [
             'ID'

@@ -350,9 +350,14 @@ class Result
 
     public static function GetStatisticsUsers(){
 
+        $users = User::GetAllUsers();
+
+        foreach ($users as $user){
+            Course::GetUserCoursesInfo($user);
+        }
 
         return Helper::GetResponseApi(200, [
-            'user_courses_progress' => []
+            'user_courses_progress' => $users
         ]);
     }
 

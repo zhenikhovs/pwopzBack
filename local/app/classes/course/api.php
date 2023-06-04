@@ -15,16 +15,19 @@ class Course
         ]);
     }
 
-    public static function GetUserCoursesInfo() {
+    public static function GetUserCoursesInfo($user = null) {
         global $USER;
 
-        $arResultUserGroups = User::GetUserGroupsInfo();
+        if(!$user){
+            $user = $USER->GetID();
+        }
+        $arResultUserGroups = User::GetUserGroupsInfo($user);
 
         $arFilter = Array('IBLOCK_ID'=> \Legacy\Config::Courses,
             'ACTIVE'=>'Y',
             array(
                 "LOGIC" => "OR",
-                'PROPERTY_USER'=>$USER->GetID(),
+                'PROPERTY_USER'=> $user,
                 'PROPERTY_USER_GROUP'=>$arResultUserGroups
             )
         );
